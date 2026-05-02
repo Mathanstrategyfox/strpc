@@ -185,7 +185,7 @@ export default function Chatbot({ placeholder }: { placeholder?: string }) {
                   key={i}
                   onClick={() => {
                     setIsOpen(false)
-                    router.push(`/${slugify(machine.name)}`)
+                    router.push(machine.url)
                   }}
                   className="inline-flex items-center gap-1.5 px-3 py-1 mx-1 rounded-lg bg-blue-600 text-white text-[13px] font-bold hover:bg-blue-700 transition-all shadow-sm hover:shadow-md active:scale-95 align-middle border border-blue-500/20"
                 >
@@ -224,8 +224,8 @@ export default function Chatbot({ placeholder }: { placeholder?: string }) {
                 key={i}
                 onClick={() => {
                   setIsOpen(false)
-                  router.push(`/${slugify(m.name)}`)
-                }}
+                  router.push(m.url)
+                  }}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 text-white text-[12px] font-bold hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20 active:scale-95 border border-emerald-400/20"
               >
                 {m.name} <ExternalLink className="h-3.5 w-3.5" />

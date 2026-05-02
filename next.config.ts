@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/chatbot-api/:path*',
-        destination: 'https://starpacai-1002394430168.europe-west1.run.app/:path*',
+        destination: '/api/chatbot-api/:path*',
       },
     ]
   },
