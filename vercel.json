@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/chatbot-api/:path*",
-      "destination": "/api/chatbot-api/:path*"
-    }
-  ]
-}

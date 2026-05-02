@@ -22,14 +22,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  async rewrites() {
-    return [
-      {
-        source: '/chatbot-api/:path*',
-        destination: '/api/chatbot-api/:path*',
-      },
-    ]
-  },
+  
 };
 
 export default nextConfig;

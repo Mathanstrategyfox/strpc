@@ -94,7 +94,7 @@ export default function Chatbot({ placeholder }: { placeholder?: string }) {
     setIsOpen(true)
 
     try {
-      const endpoint = mode === 'chat' ? '/chatbot-api/chat' : '/chatbot-api/followup'
+      const endpoint = mode === 'chat' ? '/api/chatbot-api/chat' : '/api/chatbot-api/followup'
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

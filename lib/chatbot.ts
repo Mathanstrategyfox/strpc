@@ -5,6 +5,10 @@ const GROQ_API_KEY = process.env.NEXT_PUBLIC_GROQ_API_KEY || process.env.GROQ_AP
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 export async function groqChat(prompt: string, systemMessage?: string) {
+  if (!GROQ_API_KEY) {
+    throw new Error("GROQ_API_KEY is missing. Please set it in your environment variables.");
+  }
+
   const messages: any[] = [];
   if (systemMessage) {
     messages.push({ role: "system", content: systemMessage });
@@ -50,11 +54,11 @@ ${JSON.stringify(machinesData, null, 2)}
 
 Rules:
 1. Be friendly, professional, and enthusiastic about Starpac's engineering excellence.
-2. When suggesting a machine, you MUST use its EXACT NAME from the catalogue and wrap it in double asterisks, like this: **[Exact Machine Name]**.
-3. CRITICAL: The bolded name must be the ONLY way you mention the machine at the start of your explanation. For example: "1. **PS Series Single Lane VFFS**: This machine is..."
-4. Use the provided Technical Data to explain WHY a machine is suitable.
-5. If a user asks a generic question, pivot back to production needs: "I'd be happy to discuss that! To recommend the best packaging solution, could you tell me what product you are packing and your target speed?"
-6. Always try to identify: Product Type, Pack Format, and Production Speed.
+2. When suggesting a machine, you MUST use its EXACT NAME from the "Machine Catalogue" below and wrap it in double asterisks, like this: **[Exact Machine Name]**.
+3. IMPORTANT: Do NOT use model numbers (e.g., PS 360, HS 190) or abbreviations (e.g., PFS 1 & 2) as the primary name. Only use the full names provided in the JSON list (e.g., **single-lane-intermittent-motion-baggers**).
+4. CRITICAL: The bolded name must be the ONLY way you mention the machine at the start of your explanation. For example: "1. **single-lane-intermittent-motion-baggers**: This machine is..."
+5. Use the provided Technical Data to explain WHY a machine is suitable.
+6. If a user asks a generic question, pivot back to production needs: "I'd be happy to discuss that! To recommend the best packaging solution, could you tell me what product you are packing and your target speed?"
 7. Keep responses concise and sales-focused.
 `;
 
