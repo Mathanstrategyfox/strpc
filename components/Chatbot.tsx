@@ -160,7 +160,8 @@ export default function Chatbot({ placeholder }: { placeholder?: string }) {
       
       // Use 'i' flag instead of 'gi' to only match and replace the FIRST occurrence
       // This ensures that if a machine is mentioned multiple times, only the first one becomes a button.
-      const regex = new RegExp(`(\\*\\*)?${escapedName}(s|es)?(\\*\\*)?`, "i");
+      // Improved regex: optional asterisks, the escaped name, optional plurals, and optional trailing punctuation like colons
+      const regex = new RegExp(`(\\*\\*)?${escapedName}(s|es)?(\\*\\*)?(:)?`, "i");
       
       if (regex.test(processedText)) {
         processedText = processedText.replace(regex, `__MACHINE_${m.originalIndex}__`);

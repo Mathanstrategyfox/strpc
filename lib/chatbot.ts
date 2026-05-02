@@ -1,4 +1,6 @@
 
+import { machinesData, companyKnowledge } from './machines-data';
+
 const GROQ_API_KEY = process.env.NEXT_PUBLIC_GROQ_API_KEY || process.env.GROQ_API_KEY;
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
@@ -38,43 +40,23 @@ export async function groqChat(prompt: string, systemMessage?: string) {
 }
 
 export const STARPAC_SYSTEM_PROMPT = `
-You are the official Sales Assistant for "Starpac India", a leading global manufacturer of high-performance packaging machinery with over 25 years of engineering excellence.
+You are the official Sales Assistant for "Starpac India". Your goal is to suggest the perfect packaging machines based on user needs and explain their benefits.
 
-Your goal is to suggest the perfect packaging machines based on user needs and explain their benefits. You are proactive and sales-oriented.
+Company Information:
+${JSON.stringify(companyKnowledge, null, 2)}
 
-Our Machines & Categories:
-1. Pouch Packaging (VFFS):
-   - Single Lane (PS 360/550/820): Ideal for powders, granules, and small solids.
-   - Multilane (HS 360/550): High-speed sachet packing for liquids, pastes, and powders.
-   - Multitrack (MT/MTD 600/1200): Continuous motion for maximum output (up to 1200 pouches/min).
-2. Filling & Capping:
-   - Standalone Fillers (Orion AF): Precision auger fillers for powders and volumetric fillers for liquids.
-   - Jar/Cup Fillers (JFS 1/2): Rotary and Linear systems for filling and sealing jars, cups, and cans.
-3. Flow Wrappers:
-   - MW Series (MW 240/550/820): Horizontal wrappers for biscuits, cakes, and soap bars.
-   - MCW 300: Continuous motion for high-speed confectionery packing.
-4. Special Solutions:
-   - Vacuum Chamber Machines: For shelf-life extension of food products.
-   - Pick-Fill-Seal (PFS): Pre-made pouch filling systems.
+Our Machine Catalogue & Technical Data:
+${JSON.stringify(machinesData, null, 2)}
 
 Rules:
-1. Be friendly, professional, and enthusiastic.
-2. When suggesting a machine, provide a brief description and ALWAYS include the machine's name in bold, like this: **[Machine Name]**.
-3. Use bold text for emphasis. Keep responses concise and engaging.
-4. If a user asks a generic question, steer back to their production needs: "I can certainly help with that! To suggest the best machine, what kind of product are you looking to pack, and what is your target production speed?"
-5. Always ask for: Product Type, Pack Weight, and Production Speed if they haven't mentioned them.
+1. Be friendly, professional, and enthusiastic about Starpac's engineering excellence.
+2. When suggesting a machine, you MUST use its EXACT NAME from the catalogue and wrap it in double asterisks, like this: **[Exact Machine Name]**.
+3. CRITICAL: The bolded name must be the ONLY way you mention the machine at the start of your explanation. For example: "1. **PS Series Single Lane VFFS**: This machine is..."
+4. Use the provided Technical Data to explain WHY a machine is suitable.
+5. If a user asks a generic question, pivot back to production needs: "I'd be happy to discuss that! To recommend the best packaging solution, could you tell me what product you are packing and your target speed?"
+6. Always try to identify: Product Type, Pack Format, and Production Speed.
+7. Keep responses concise and sales-focused.
 `;
-
-export const MACHINES_LIST = [
-  { name: "PS 360 Single Lane VFFS", slug: "/single-lane-intermittent-motion-baggers", desc: "Intermittent motion VFFS for small to medium pouches." },
-  { name: "HS 550 Multilane VFFS", slug: "/multilane-intermittent-motion-baggers", desc: "High-speed multilane sachet machine." },
-  { name: "MT 1200 Multitrack", slug: "/multitrack-intermittent-continuous-motion-baggers", desc: "Continuous motion multitrack for ultra-high speed." },
-  { name: "JFS 1 Rotary Jar Filler", slug: "/rotary-and-linear-jarcupcan-fill-and-close-machines", desc: "Automatic rotary filling and capping for jars/cups." },
-  { name: "MW 550 Flow Wrapper", slug: "/intermittent-and-continuous-motion-flow-wrappers", desc: "Horizontal flow wrapper for biscuits and bakery." },
-  { name: "Orion AF Auger Filler", slug: "/standalone-fillers", desc: "Precise powder dosing system." },
-  { name: "Vacuum Chamber Machine", slug: "/plc-based-vacuum-chamber-machine", desc: "For vacuum packaging of meat, cheese, and vegetables." },
-  { name: "PFS Pouch Machine", slug: "/pick-fill-and-seal-and-horizontal-form-fill-and-seal", desc: "Rotary Pick-Fill-Seal for pre-made pouches." }
-];
 
 export async function isPackagingQuery(query: string) {
   const prompt = `Determine if this query is about packaging machines or production needs: "${query}". Answer ONLY YES or NO.`;
@@ -90,13 +72,13 @@ export async function isQueryComplete(query: string) {
 
 export async function askFollowup(query: string) {
   const prompt = `The user is interested in: "${query}". Ask a polite, professional follow-up question to find out their product type, pack weight, or target speed.`;
-  return await groqChat(prompt);
+  return await groqChat(prompt, STARPAC_SYSTEM_PROMPT);
 }
 
 export async function selectMachines(query: string) {
-  const options = MACHINES_LIST.map(m => `${m.name}: ${m.desc}`).join("\n");
+  const options = machinesData.map(m => `${m.name}: ${m.description}`).join("\n");
   const prompt = `User needs: "${query}". \nOptions:\n${options}\nPick the 2 most relevant machine names. Return ONLY the names separated by a comma.`;
   const res = await groqChat(prompt);
   const selected = res.split(",").map((s: string) => s.trim());
-  return MACHINES_LIST.filter(m => selected.some(name => m.name.toLowerCase().includes(name.toLowerCase())));
+  return machinesData.filter(m => selected.some((name: string) => m.name.toLowerCase().includes(name.toLowerCase())));
 }
